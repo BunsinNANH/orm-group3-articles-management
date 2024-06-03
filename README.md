@@ -1,4 +1,4 @@
-# orm-group3-articles-management
+# Project name: orm-group3-articles-management
 
 ## Install Modules
 ### npm install
@@ -7,10 +7,11 @@
 ### npm run start:dev
 
 ## API Routes Documentation
-++ Tables
-** users {id,username, password, is_admin, role_id}
-** user_details {id, firstname, lastname, email, user_id, created_at, updated_at}
-** roles {id, role}
+### Tables
+#### users {id,username, password, is_admin, role_id}
+#### user_details {id, firstname, lastname, email, user_id, created_at, updated_at}
+#### roles {id, role}
+#### articles {id, title, contents, created_by, is_published, created_at, updated_at}
 
 ### Get All Users
 http://localhost:8080/users?pageSize=5&page=1 , Method: GET
