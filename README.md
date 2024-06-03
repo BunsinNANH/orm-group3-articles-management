@@ -28,6 +28,7 @@ http://localhost:8080/users/:id , Method: DELETE
 ### Create User
 http://localhost:8080/users , Method: POST , 
 required fields: {username, password, is_admin, role_id, firstname, lastname, email}
+
 Note: username & email must be unique
 
 ### Search Users by Username
