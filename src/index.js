@@ -215,7 +215,10 @@ app.put("/users/:id", async (req, res) => {
   const updated_at = currentDate;
   
   let updateUserDetails = {firstname,lastname,email,updated_at}
-  const updatedUser = {username,password: await hashPassword(password)};
+  let updatedUser = {
+    username: username.toLocaleLowerCase(),
+    password: password !== undefined ? await hashPassword(password) : password,
+  };
 
   const userDetailsIndex = data["user_details"].findIndex((user_details) => user_details.user_id === id);
   const userIndex = data["users"].findIndex((user) => user.id === id);
