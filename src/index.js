@@ -7,7 +7,6 @@ const data = require("../data.json");
 const bcrypt = require('bcrypt');
 
 const moment = require('moment');
-
 const currentDate = moment().format('yyyy-MM-DD hh:mm:ss');
 
 app.use(express.static("public"));
@@ -28,8 +27,8 @@ app.get("/", (_req, res) => {
 app.get("/users", (req, res) => {
 const users = data["users"];
   let { pageSize, page } = req.query;
-  pageSize = parseInt(pageSize);
-  page = parseInt(page);
+  pageSize = pageSize !== undefined ? parseInt(pageSize): 10;
+  page = page !== undefined ? parseInt(page): 1;
   const filteredUser = [];
   for(let i=page; i<(page+pageSize) && i<users.length; i++){
     filteredUser.push(users[i]);
@@ -202,7 +201,7 @@ app.post('/register', async (req, res) => {
   }
 });
 // Update user and User details by User ID
-app.put("/users/:id", (req, res) => {
+app.put("/users/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const getUserDetails = data["user_details"].find((user_details) => user_details.user_id === id);
   const getUser = data["users"].find((user) => user.id === id);
@@ -216,7 +215,7 @@ app.put("/users/:id", (req, res) => {
   const updated_at = currentDate;
   
   let updateUserDetails = {firstname,lastname,email,updated_at}
-  const updatedUser = {username,password};
+  const updatedUser = {username,password: await hashPassword(password)};
 
   const userDetailsIndex = data["user_details"].findIndex((user_details) => user_details.user_id === id);
   const userIndex = data["users"].findIndex((user) => user.id === id);
@@ -324,7 +323,7 @@ app.get("/users/details/:id", (req, res) =>{
  */
 // Get all articles
 app.get("/articles", (req, res) => {
-  res.json(data.articles);
+  return res.json(paginationFuntion(data.articles,data.articles, 1, 10))
 });
 
 // Get article by ID
