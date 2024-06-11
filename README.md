@@ -41,3 +41,22 @@ http://localhost:8080/search/users/details?firstname=ang , Method: GET , require
 http://localhost:8080/register , Method: POST , required fields: {username, password, firstname, lastname, email}
 
 Note: username & email must be unique
+
+### Get All Articles
+http://localhost:8080/articles , Method: GET
+
+### Create Article
+http://localhost:8080/articles , Method: POST, required fields: { title, contents, created_by, is_published, created_at, updated_at }
+
+### Update Article
+http://localhost:8080/articles/:id , Method: PUT, required, param:{id}, fields: { title, contents, created_by, is_published, created_at, updated_at }
+
+### Delete Article
+http://localhost:8080/articles/:id , Method: DELETE, require param: id
+
+### Get Article by ID
+http://localhost:8080/articles/:id , Method: GET, require param: id
+
+### Search Article
+http://localhost:8080/search/articles/list?created_by=string, Method GET, required param: created_by
+
