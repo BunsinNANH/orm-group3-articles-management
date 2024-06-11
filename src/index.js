@@ -201,7 +201,7 @@ app.post('/register', async (req, res) => {
   }
 });
 // Update user and User details by User ID
-app.put("/users/:id", async (req, res) => {
+app.put("/users/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const getUserDetails = data["user_details"].find((user_details) => user_details.user_id === id);
   const getUser = data["users"].find((user) => user.id === id);
@@ -216,8 +216,8 @@ app.put("/users/:id", async (req, res) => {
   
   let updateUserDetails = {firstname,lastname,email,updated_at}
   let updatedUser = {
-    username: username.toLocaleLowerCase(),
-    password: password !== undefined ? await hashPassword(password) : password,
+    username: username,
+    password: password,
   };
 
   const userDetailsIndex = data["user_details"].findIndex((user_details) => user_details.user_id === id);
