@@ -2,13 +2,17 @@ import React,{useEffect, useState} from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import moment from 'moment';
 
 function Navbar() {
     const navigate = useNavigate();
     const [authProfile, setAuthProfile] = useState();
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") !== null ? localStorage.getItem("token"): null;
+    
+    const currentDate = moment(new Date()).format("YYYY/MM/DD hh:mm:ss");
+    const tokenExpiredAt = moment(new Date(jwtDecode(token).exp) * 1000).format("YYYY/MM/DD hh:mm:ss");
     const authID = token !== null? jwtDecode(token).userId: null;
-    if (token === null) {
+    if (new Date(currentDate) > new Date(tokenExpiredAt)) {
         navigate("/login")
     }
     useEffect(() => {
@@ -24,8 +28,9 @@ function Navbar() {
     }, []);
     function handleLogout(e){
         e.preventDefault();
-        localStorage.removeItem("token");
+        localStorage.setItem("token", null);
         alert("You have been logout from system!");
+        navigate("/login")
         window.location.reload(true)
     }
     return (

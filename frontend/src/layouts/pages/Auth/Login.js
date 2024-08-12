@@ -23,10 +23,9 @@ function Login(){
                 localStorage.setItem("token", token);
                 alert("Login successfully!");
                 navigate("/")
-            }else{
-                alert("Invalid credential!");
             }
         } catch (error) {
+            alert("Username & password invalid!");
             console.log("Request fail", error);
         }
     }

@@ -16,12 +16,13 @@ function EditArticle() {
     const navigate = useNavigate();
     const articleId = window.location.pathname;
     const id = articleId.substring(articleId.lastIndexOf('/') + 1);
-    // const user = state;
+    // get user 
     useEffect(() => {
         axios.get("http://localhost:8080/api/users").then((response) => {
             setUsers(response.data.users);
         });
     }, []);
+    // get article by ID
     useEffect(() => {
         axios.get('http://localhost:8080/api/articles/' + id)
             .then(res => {
@@ -29,6 +30,7 @@ function EditArticle() {
             })
             .catch(err => console.log(err));
     }, [])
+    // handle update article
     const handleSummit = async (e) => {
         e.preventDefault();
         // createdByUserId = parseInt(createdByUserId);
