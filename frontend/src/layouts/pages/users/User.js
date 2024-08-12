@@ -6,9 +6,12 @@ import Footer from "../../portals/Footer";
 import axios from "axios";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import App from "../../App";
+import { jwtDecode } from "jwt-decode";
 
 function User() {
+    const token = localStorage.getItem("token") !== null ? localStorage.getItem("token"): null;
+    const authID = token !== null? jwtDecode(token).userId: null;
+    console.log(authID)
     const baseURL = "http://localhost:8080/api/users";
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
@@ -94,37 +97,39 @@ function User() {
                                         </thead>
                                         <tbody>
                                             {users.map((user, index) => {
-                                                return (
-                                                    <tr>
-                                                        <td>{index + 1}</td>
-                                                        <td>{user.username}</td>
-                                                        <td>{user.profile.firstname}</td>
-                                                        <td>{user.profile.lastname}</td>
-                                                        <td>{user.profile.email}</td>
-                                                        {/* <td>{user.roleId === 2 ? "User" :"Admin"}</td> */}
-                                                        <td>{formatDate(user.profile.createdAt)}</td>
-                                                        <td className="text-center action">
-                                                            <a href={"/users/" + user.id}><i className="fas fa-pencil text-primary"> </i></a>
-                                                            <span className="delete-user-btn"
-                                                                onClick={() => {
-                                                                    handleShowDeleteModal()
-                                                                    setUsername(user.username)
-                                                                    setUserDeleteId(user.id)
+                                                if (user.id !== authID) {
+                                                    return (
+                                                        <tr>
+                                                            <td>{index}</td>
+                                                            <td>{user.username}</td>
+                                                            <td>{user.profile.firstname}</td>
+                                                            <td>{user.profile.lastname}</td>
+                                                            <td>{user.profile.email}</td>
+                                                            {/* <td>{user.roleId === 2 ? "User" :"Admin"}</td> */}
+                                                            <td>{formatDate(user.profile.createdAt)}</td>
+                                                            <td className="text-center action">
+                                                                <a href={"/users/" + user.id}><i className="fas fa-pencil text-primary"> </i></a>
+                                                                <span className="delete-user-btn"
+                                                                    onClick={() => {
+                                                                        handleShowDeleteModal()
+                                                                        setUsername(user.username)
+                                                                        setUserDeleteId(user.id)
+                                                                    }}>
+                                                                    <i className="fas fa-trash text-danger"> </i></span>
+                                                                <span className="view-user-btn" onClick={() => {
+                                                                    handleShowViewModal()
+                                                                    setViewEmail(user.profile.email)
+                                                                    setViewUsername(user.username)
+                                                                    setViewFirstname(user.profile.firstname)
+                                                                    setViewLastname(user.profile.lastname)
+                                                                    setViewCreatedAt(user.profile.createdAt)
                                                                 }}>
-                                                                <i className="fas fa-trash text-danger"> </i></span>
-                                                            <span className="view-user-btn" onClick={() => {
-                                                                handleShowViewModal()
-                                                                setViewEmail(user.profile.email)
-                                                                setViewUsername(user.username)
-                                                                setViewFirstname(user.profile.firstname)
-                                                                setViewLastname(user.profile.lastname)
-                                                                setViewCreatedAt(user.profile.createdAt)
-                                                            }}>
-                                                                <i className="fas fa-eye text-info"> </i>
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                )
+                                                                    <i className="fas fa-eye text-info"> </i>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
                                             })}
                                         </tbody>
                                     </table>
