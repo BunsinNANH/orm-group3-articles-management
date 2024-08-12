@@ -19,19 +19,34 @@ function Article() {
         var options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(string).toLocaleDateString([],options);
     }
+    // View Article: Variables, Modal handling
     const [viewArticleTitle, setViewArticleTitle] = useState();
     const [viewArticleContents, setViewArticleContents] = useState();
     const [viewArticleAuthor, setViewArticleAuthor] = useState();
     const [viewArticlePublishedDate, setViewArticlePublishedDate] = useState();
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [deleteArticleTitle, setDeleteArticleTitle] = useState();
-    const [deleteArticleId, setDeleteArticleId] = useState();
+    const [showPublishModal, setShowPublishModal] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
-    const handleCloseDeleteModal = () => setShowDeleteModal(false);
     const handleCloseViewModal = () => setShowViewModal(false);
+    function handleShowViewModal() {
+        setShowViewModal(true)
+    }
+    // Delete Article: Variables, Modal handling
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const handleCloseDeleteModal = () => setShowDeleteModal(false);
+    const [deleteArticleId, setDeleteArticleId] = useState();
+    const [deleteArticleTitle, setDeleteArticleTitle] = useState();
     function handleShowDeleteModal() {
         setShowDeleteModal(true)
     }
+    // View Article: Variables, Modal handling
+    const [publishArticleId, setPublishArticleId] = useState();
+    const [isPublished, setIsPublished] = useState();
+    const [publishTitle, setPublishTitle] = useState();
+    const handleClosePublishModal = () => setShowPublishModal(false);
+    function handleShowPublishModal() {
+        setShowPublishModal(true)
+    }
+    // Handle delete article
     const handleDeleteArticle = async (e) => {
         e.preventDefault();
         try {
@@ -45,23 +60,25 @@ function Article() {
             console.log("Request fail", error);
         }
     }
-    // function getAuthor(userId){
-    //     const author = "";
-    //     try {
-    //         const response = await axios.get("http://localhost:8080/api/users/" + userId);
-    //         if (response.status === 200) {
-    //             navigate("/articles")
-    //             alert("Article deleted successfully!")
-    //             window.location.reload(true)
-    //         }
-    //     } catch (error) {
-    //         console.log("Request fail", error);
-    //     }
-    //     return author;
-    // }
-    function handleShowViewModal() {
-        setShowViewModal(true)
+    // Handle publish article
+    const handlePublishArticle = async (e) => {
+        e.preventDefault();
+        const article = { 
+            isPublished: isPublished === true ? false: true
+        }
+        const alertSMS = isPublished === true? "unpublished": "published";
+        try {
+            const response = await axios.put("http://localhost:8080/api/articles/" + publishArticleId, article);
+            if (response.status === 201) {
+                alert("Article "+alertSMS+" successfully!");
+                navigate("/articles")
+                window.location.reload(true)
+            }
+        } catch (error) {
+            console.log("Request fail", error);
+        }
     }
+    
     return (
         <>
             <Header />
@@ -109,7 +126,17 @@ function Article() {
                                                         <td>{article.title}</td>
                                                         <td>{article.contents}</td>
                                                         <td>{article.createdByUserId}</td>
-                                                        <td>{String(article.isPublished)}</td>
+                                                        <td>
+                                                            <span className={article.isPublished===true? "btn btn-sm btn-danger": "btn btn-sm btn-success"}
+                                                                onClick={() =>{
+                                                                    handleShowPublishModal()
+                                                                    setPublishArticleId(article.id)
+                                                                    setPublishTitle(article.title)
+                                                                    setIsPublished(article.isPublished)
+                                                                }}>
+                                                                {article.isPublished === true ? "Unpublish": "Publish"}
+                                                            </span>
+                                                        </td>
                                                         <td>{formatDate(article.createdAt)}</td>
                                                         <td className="text-center action">
                                                             <a href={"/articles/"+article.id}><i className="fa fa-pencil text-primary"> </i></a>
@@ -156,6 +183,21 @@ function Article() {
                     <Modal.Footer>
                         <button type="submit" className="btn btn-danger float-left" onClick={handleCloseDeleteModal}>Yes</button>
                         <Button variant="secondary" onClick={handleCloseDeleteModal}>No</Button>
+                    </Modal.Footer>
+                </form>
+            </Modal>
+            {/* Modal publish Article */}
+            <Modal show={showPublishModal} onHide={handlePublishArticle}>
+                <form onSubmit={handlePublishArticle}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Publish Article</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Are you sure to publish <strong><span className="text-danger">{publishTitle}</span></strong>?</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <button type="submit" className="btn btn-danger float-left" onClick={handleClosePublishModal}>Yes</button>
+                        <Button variant="secondary" onClick={handleClosePublishModal}>No</Button>
                     </Modal.Footer>
                 </form>
             </Modal>

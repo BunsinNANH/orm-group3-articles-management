@@ -6,7 +6,7 @@ import Footer from "../../portals/Footer";
 import axios from "axios";
 
 function UpdateUser() {
-    const [user, setUser] = useState([]);
+    const [userData, setUserData] = useState([]);
     const [state, setState] = useState();
     const [username, setUsername] = useState();
     const [firstname, setFirstname] = useState();
@@ -17,19 +17,29 @@ function UpdateUser() {
     const id = userId.substring(userId.lastIndexOf('/') + 1);
     useEffect(() => {
         axios.get('http://localhost:8080/api/users/' + id)
-            .then(res => {
-                setEmail(res.data.profile.email)
-                setUsername(res.data.username)
-                setFirstname(res.data.profile.firstname)
-                setLastname(res.data.profile.lastname)
-            })
-            .catch(err => console.log(err));
+        .then(res => {
+            // setUserData(res.data)
+            setUsername(res.data.username)
+            setFirstname(res.data.profile.firstname)
+            setLastname(res.data.profile.lastname)
+            setEmail(res.data.profile.email)
+        })
+        .catch(err => console.log(err));
     }, [])
+    // console.log(userData.profile)
+        
+        // const userState = {
+    //     username: username !== undefined? setUsername(userData.username): username,
+    //     firstname: firstname !== undefined? setFirstname(userData.profile.firstname) : firstname,
+    //     lastname: lastname !== undefined? setLastname(userData.profile.lastname): lastname,
+    //     email: email !== undefined? setEmail(userData.profile.email) : email
+    // }
     const handleSummit = async (e) => {
         e.preventDefault();
-        const user = { username, firstname, lastname, email }
+        const userUpdate = {username, firstname,lastname,email};
+        console.log(userUpdate)
         try {
-            const response = await axios.put("http://localhost:8080/api/users/" + id, user);
+            const response = await axios.put("http://localhost:8080/api/users/" + id, userUpdate);
             if (response.status === 201) {
                 navigate("/users")
                 alert("Update user successfully!");
